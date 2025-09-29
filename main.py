@@ -54,11 +54,12 @@ class Player(Entity):
     def fire(self):
         pass
 
-def collision_check(pos1, radius1, pos2, radius2):
-    dx = pos1.x - pos2.x
-    dy = pos1.y - pos2.y
-    distance = math.sqrt(dx * dx + dy * dy)
-    return distance < (radius1 + radius2)
+def collision_check(entity_a, entity_b: Entity):
+    """Check collision between two axis-aligned rectangles"""
+    return (entity_a.position.x < entity_b.position.x + entity_b.sprite.width and
+            entity_a.position.x + entity_a.sprite.width > entity_b.position.x and
+            entity_a.position.y < entity_b.position.y + entity_b.sprite.height and
+            entity_a.position.y + entity_a.sprite.height > entity_b.position.y)
 
 def handle_input(entity, thrust_power, frame_time):
     # Handle input
@@ -114,7 +115,7 @@ def update_game(entities: list[Entity], frame_time: float):
                 asteroid.dead = True
             elif asteroid.position.y > screen_height:
                 asteroid.dead = True
-            if collision_check(entities[0].position, entities[0].sprite.width/2, asteroid.position, asteroid.sprite.width/2):
+            if collision_check(entities[0], asteroid):
                 entities[0].dead = True
 
 def draw_screen(entities: list[Entity], frame_time: float):
